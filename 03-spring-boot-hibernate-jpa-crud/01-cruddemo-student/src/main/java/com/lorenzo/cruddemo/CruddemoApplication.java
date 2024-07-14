@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class CruddemoApplication {
 
@@ -18,12 +20,79 @@ public class CruddemoApplication {
 	public CommandLineRunner commandLineRunner(StudentDAO studentDAO){
 		return runner -> {
 
-		//	createMultipleStudents(studentDAO);
+			createMultipleStudents(studentDAO);
 
 		//	createStudent(studentDAO);
 
-			readStudent(studentDAO);
+		//	readStudent(studentDAO);
+
+		//	queryForStudents(studentDAO);
+			
+		//	queryForStudentsByLastName(studentDAO, "Dew");
+
+		//	updateStudentFirstNameById(studentDAO, 55, "Britney");
+
+		//	deleteStudentById(studentDAO, 2);
+
+		//	deleteAllStudents(studentDAO);
 		};
+	}
+
+	private void deleteAllStudents(StudentDAO studentDAO) {
+		int rows = studentDAO.deleteAll();
+		System.out.println("Deleted " + rows + " students");
+	}
+
+	private void deleteStudentById(StudentDAO studentDAO, int id) {
+		System.out.println("Searching for student with id: " + id);
+		Student student = studentDAO.findById(id);
+		if (student != null) {
+			System.out.println("Found student");
+			System.out.println("deleting student with id: " + id);
+			studentDAO.delete(id);
+		}else {
+			System.out.println("Student with id: " + id + " not found");
+		}
+	}
+
+	private void updateStudentFirstNameById(StudentDAO studentDAO, int id, String newName) {
+		System.out.println("Searching for student with id: " + id);
+		Student student = studentDAO.findById(id);
+		if (student != null) {
+			student.setFirstName(newName);
+			System.out.println("Found student");
+
+			System.out.println("Updating first name...");
+			String lastName = student.getLastName();
+			String firstName = student.getFirstName();
+
+			student.setEmail(String.format("%s%s@gmail.com",firstName, lastName));
+			studentDAO.update(student);
+			System.out.println("Updated student: " + student);
+		} else {
+			System.out.println("Student with id: " + id + " not found");
+		}
+
+	}
+
+	private void queryForStudentsByLastName(StudentDAO studentDAO, String lastName) {
+		// get a list of students
+		List<Student> students = studentDAO.findByLastName(lastName);
+
+		// display a list of students
+		for (Student student : students) {
+			System.out.println(student);
+		}
+	}
+
+	private void queryForStudents(StudentDAO studentDAO) {
+		// get a list of students
+		List<Student> students = studentDAO.findAll();
+
+		// display the list of students
+		for(Student student : students){
+			System.out.println(student);
+		}
 	}
 
 	private void readStudent(StudentDAO studentDAO) {
